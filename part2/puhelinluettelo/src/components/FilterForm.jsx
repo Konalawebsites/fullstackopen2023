@@ -1,6 +1,5 @@
-import { useState } from "react"
-
 const FilterForm = ({newFilter, handleFilterChange}) => {
+  
     return (
       <form>
           <div>

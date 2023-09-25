@@ -3,11 +3,8 @@ import FilterForm from './components/FilterForm'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Notification from './components/Notification'
-import axios from 'axios'
 import personService from './services/persons'
 import './index.css'
-
-
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -73,16 +70,24 @@ const App = () => {
         setPersons(persons.concat(foundPerson))
         setNewName('')
         setNewNumber('')
+        setIsError(false)
+        setNotificationMessage(
+          `${newName} added to Phonebook`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
       })
-
-    setIsError(false)
-    setNotificationMessage(
-      `${newName} added to Phonebook`
-    )
-    setTimeout(() => {
-      setNotificationMessage(null)
-    }, 5000)
-  }
+      .catch(error => {
+        setIsError(true)
+        setNotificationMessage(
+          error.response.data.error
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+     })
+    }
 
   const removePerson = (person) => {
     personService
