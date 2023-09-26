@@ -8,18 +8,6 @@ const Person = require('./models/person')
 const morgan = require('morgan')
 morgan.token('body', req => { return JSON.stringify(req.body) })
 
-const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
-
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    } 
-    else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })
-    }
-    next(error)
-}
-
 app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -35,7 +23,6 @@ app.get('/info', (req, res) => {
         Person.find({}).then(persons => {
             res.json(
              `Phonebook has info for ${persons.length} people ---- ${myDate}`)
-
         }
     );
 });
@@ -110,10 +97,23 @@ app.use(unknownEndpoint)
 
 
 // tämä tulee kaikkien muiden middlewarejen rekisteröinnin jälkeen!
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    } 
+    else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }
+    next(error)
+}
+
 app.use(errorHandler)
 
 const PORT = process.env.PORT
 
-app.listen(PORT)
-
-console.log(`Server running on port ${PORT}`)
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
