@@ -32,9 +32,11 @@ const generateId = () => {
 const myDate = new Date();
 
 app.get('/info', (req, res) => {
-    res.send(
-        `<p> Phonebook has info for ${Person.length} people </p>
-        ${myDate}`
+        Person.find({}).then(persons => {
+            res.json(
+             `Phonebook has info for ${persons.length} people ---- ${myDate}`)
+
+        }
     );
 });
 
@@ -111,6 +113,7 @@ app.use(unknownEndpoint)
 app.use(errorHandler)
 
 const PORT = process.env.PORT
+
 app.listen(PORT)
 
 console.log(`Server running on port ${PORT}`)
