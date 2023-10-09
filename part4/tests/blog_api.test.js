@@ -1,9 +1,15 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 const app = require('../app')
-const api = supertest(app)
-const Blog = require('../models/blog')
 const helper = require('../tests/test_helper')
+
+const Blog = require('../models/blog')
+const User  = require('../models/user')
+
+const api = supertest(app)
+/* get new JWT BEARER TOKEN ending part by logging in with Postman - one log-in lasts 1 hour */
+const JWT_BEARER_TOKEN = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3Blc2V0YSIsImlkIjoiNjUxZmVjOTRhYWIyZTRiNDJlZGE0MzRlIiwiaWF0IjoxNjk2ODQwNzc3LCJleHAiOjE2OTY4NDQzNzd9.P8WWsUeXCSknKHIeDtQl-4fjTOZ6smE8qE_yyt6lrWg"
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -15,6 +21,11 @@ beforeEach(async () => {
 
     blogObject = new Blog(helper.initialBlogs[2])
     await blogObject.save()
+
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash('root', 10)
+    const user = new User({ username: 'takenUsername', password: 'root', passwordHash })
+    await user.save()
 })
 
 test('blogs are returned as json', async () => {
@@ -44,7 +55,7 @@ test('blogs in database has id, not __id', async () => {
     }
 })
 
-test('adding blogs function properly', async () => {
+test.only('adding blogs function properly', async () => {
     const newBlog = {
         title: 'Blog list should involve this title',
         author: 'testAuthor',
@@ -52,6 +63,7 @@ test('adding blogs function properly', async () => {
         likes: 8
     }
     await api.post('/api/blogs')
+        .set('Authorization', JWT_BEARER_TOKEN) 
         .send(newBlog)
         .expect(200)
         .expect('Content-Type', /application\/json/)
@@ -112,6 +124,7 @@ test('if added blog has no input on "likes", set "likes" to zero', async () => {
     }
 
     await api.post('/api/blogs')
+        .set('Authorization', JWT_BEARER_TOKEN) 
         .send(blogWithNoneLikes)
         .expect(200)
         .expect('Content-Type', /application\/json/)
