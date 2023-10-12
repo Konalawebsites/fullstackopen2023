@@ -22,7 +22,6 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'CastError') {
     return response.status(400).json({ error: error.message })
   } else if (error.name === 'ValidatorError') {
-    console.log('wtf', { error: error.message })
     return response.status(400).json({ error: error.message })
   }
   else if (error.name === 'JsonWebTokenError') {
@@ -38,17 +37,31 @@ const errorHandler = (error, request, response, next) => {
 
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('Authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
+
+  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
     request.token = authorization.substring(7)
+
   } else {
     request.token = null
   }
   next()
 }
 
+const userExtractor = async (request, response, next) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+  if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  request.user = await User.findOne({ username: decodedToken.username })
+  next()
+}
+
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  tokenExtractor
+  tokenExtractor,
+  userExtractor
 }
