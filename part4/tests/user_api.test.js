@@ -18,9 +18,8 @@ describe('error functionality in user creation process', () => {
         await user.save()
     })
 
-    test.only('creation succeeds with a fresh username', async () => {
+    test('creation succeeds with a fresh username', async () => {
         const usersAtStart = await helper.usersInDb()
-        console.log('usersAtStart', usersAtStart)
 
         const newUser = {
             username: 'kilmkeijo',
@@ -35,7 +34,7 @@ describe('error functionality in user creation process', () => {
 
         
         const usersAtEnd = await helper.usersInDb()
-        console.log('usersAtEnd', usersAtEnd)
+    
         expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
         const usernames = usersAtEnd.map(u => u.username)

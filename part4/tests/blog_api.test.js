@@ -9,7 +9,7 @@ const User = require('../models/user')
 
 const api = supertest(app)
 /* get new JWT BEARER TOKEN ending part by logging in with Postman - one log-in lasts 1 hour */
-const JWT_BEARER_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthdHV1c2EiLCJpZCI6IjY1MjZhOGNjZWRkOTEwOGNhNDg5ZmEwMSIsImlhdCI6MTY5NzA5Nzk3OSwiZXhwIjoxNjk3MTAxNTc5fQ.SMpnsKYYYyggttnbG0gpS4-ICR_pA7d9KbtWJYMINio'
+const JWT_BEARER_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthdHV1c2EiLCJpZCI6IjY1MjZhOGNjZWRkOTEwOGNhNDg5ZmEwMSIsImlhdCI6MTY5NzQ1NzMyNCwiZXhwIjoxNjk3NDYwOTI0fQ.LHVARMSgR7at92K7_JebJcmcda4-mRb-MOgK_8F1d2s'
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -58,15 +58,16 @@ test('blogs in database has id, not __id', async () => {
     }
 })
 
-test.only('adding blogs function properly', async () => {
+test('adding blogs function properly', async () => {
 
     const newBlog = {
         title: 'Blog list should involve this title',
         author: 'testAuthor',
         url: 'www.this-is-a-test.fi',
         likes: 8
-    }
+        }
     console.log('blog.api.test.js JWT_BEARER_TOKEN:', JWT_BEARER_TOKEN)
+
     await api.post('/api/blogs')
         .set('Authorization', JWT_BEARER_TOKEN )
         .send(newBlog)
@@ -74,7 +75,6 @@ test.only('adding blogs function properly', async () => {
         .expect('Content-Type', /application\/json/)
 
     const blogsInDb = await helper.blogsInDb();
-    console.log(blogsInDb)
 
     const contents = response.map(r => r.title)
 
@@ -85,7 +85,6 @@ test.only('adding blogs function properly', async () => {
 })
 
 test('changing blog`s "likes" function properly', () => {
-
     app.put('/api/notes/:id', (request, response, next) => {
         const body = request.body
       
