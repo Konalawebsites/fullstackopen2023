@@ -48,11 +48,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setNotificationMessage('username and/or password wrong')
-      setIsError(true)
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 5000)
+      handleNotificationShow('username and/or password wrong', true)
     }
   }
   const handleLogout = (event) => {
@@ -74,13 +70,19 @@ const App = () => {
       setBlogAuthor('')
       setBlogUrl('')
       setBlogs(blogs.concat(blog))
-    } catch (exception) {
     }
-    setNotificationMessage(`added blog "${title}" by ${author} succesfully`)
-    setIsError(false)
+    catch (exception) {
+      handleNotificationShow(`failed to add blog`, true)
+    }
+    handleNotificationShow(`added blog "${title}" by ${author} succesfully`, false)
+  }
+
+  const handleNotificationShow = (message, isErrorMessage) => {
+    setIsError(isErrorMessage)
+    setNotificationMessage(message)
     setTimeout(() => {
       setNotificationMessage(null)
-    }, 5000)
+    }, 4000)
   }
 
   const loginForm = () => (
@@ -124,8 +126,7 @@ const App = () => {
             setBlogUrl={setBlogUrl} handleBlogAdd={handleBlogAdd} user={user} setUser={setUser} />
 
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog}  />
-
+            <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} handleNotificationShow={handleNotificationShow} />
           )}
         </div>
       }

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import BlogViewMore from './BlogViewMore'
 import BlogViewLess from './BlogViewLess'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs, handleNotificationShow, handleBlogDelete }) => {
 
   const [isBlogView, setBlogView] = useState('viewShort')
 
@@ -23,7 +23,8 @@ const Blog = ({ blog }) => {
 
   if (isBlogView === 'viewMore') {
     return (
-      <BlogViewMore handleViewBlog={handleViewBlog} blog={blog} />
+      <BlogViewMore handleViewBlog={handleViewBlog} blog={blog} blogs={blogs} setBlogs={setBlogs} 
+      handleNotificationShow={handleNotificationShow} handleBlogDelete={handleBlogDelete} />
     )
   }
 }
