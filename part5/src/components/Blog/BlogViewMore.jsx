@@ -1,5 +1,4 @@
 import blogService from '/src/services/blogs'
-import Notification from '../Notification'
 
 const blogStyle2 = {
   fontSize: '10px',
@@ -45,19 +44,18 @@ const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, handleNotificatio
   }
 
   const handleBlogDelete = async (event) => {
-    
     event.preventDefault()
-  
-      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-        try {
-          await blogService.remove(blog.id)
-          setBlogs(blogs.filter(b => b.id !== blog.id))
-          handleNotificationShow('the blog was deleted succesfully', false)
-        } catch (exception) {
-          handleNotificationShow('blog deleting didnt go thru', true)
-        }
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+
+      try {
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        handleNotificationShow('the blog was deleted succesfully', false)
+      } catch (exception) {
+        handleNotificationShow('the blog was not deleted', true)
       }
     }
+  }
 
 
   return (

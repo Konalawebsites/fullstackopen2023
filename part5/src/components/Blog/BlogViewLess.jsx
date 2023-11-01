@@ -10,7 +10,7 @@ const buttonStyle= {
   fontSize: '9px'
 }
 
-const BlogViewLess = ({blog, handleViewBlog}) => (
+const BlogViewLess = ({ blog, handleViewBlog }) => (
   <div style={blogStyle} >
     <p> "{blog.title}", {blog.author} <button style={buttonStyle} onClick={handleViewBlog}> view more</button> </p>
   </div>
