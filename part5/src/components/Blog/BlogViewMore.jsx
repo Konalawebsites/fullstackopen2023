@@ -1,4 +1,4 @@
-import blogService from '/src/services/blogs'
+import blogService from '../../services/blogs'
 
 const blogStyle2 = {
   fontSize: '10px',
@@ -16,7 +16,7 @@ const buttonStyle2 = {
   fontSize: '8px'
 }
 
-const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, handleNotificationShow }) => {
+const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, handleNotificationShow, user }) => {
 
   const handleBlogLike = async (event) => {
     event.preventDefault()
@@ -57,14 +57,18 @@ const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, handleNotificatio
     }
   }
 
-
   return (
-    <div style={blogStyle2} >
-      <p> "{blog.title}", {blog.author} <button style={buttonStyle} onClick={handleViewBlog}> view less</button> </p>
+    <div style={blogStyle2} className='blogContent'>
+      <p> title: {blog.title} <button style={buttonStyle} onClick={handleViewBlog}> view less</button> </p>
+      <p> author: {blog.author} </p>
       <p> website: {blog.url} </p>
-      <p> likes: {blog.likes} <button style={buttonStyle2} onClick={handleBlogLike} > like</button> </p>
+      <p> likes: {blog.likes} <button id='like' style={buttonStyle2} onClick={handleBlogLike}>like</button> </p>
       <p> user: {blog.user.username} </p>
-      <button style={buttonStyle2} onClick={handleBlogDelete}> delete </button>
+
+      {user.username === blog.user.username
+        ? <button id='delete' style={buttonStyle2} onClick={handleBlogDelete}> delete </button>
+        : null
+      }
     </div>
   )
 }

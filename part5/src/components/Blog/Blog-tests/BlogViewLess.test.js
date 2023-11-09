@@ -1,11 +1,12 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
-import BlogViewLess from './BlogViewLess'
+import BlogViewLess from '../BlogViewLess'
 
 test('Blog renders title and author when it is viewed shortly', () => {
   const blog = {
     title: 'testTitle',
+    author: 'testAuthor',
     user: {
       username: 'testUser'
     }
@@ -19,11 +20,10 @@ test('Blog renders title and author when it is viewed shortly', () => {
     'loggedBlogappUser', JSON.stringify(testUser)
   )
 
-  const { container }  = render(
-    < BlogViewLess blog={blog} />
+  render(< BlogViewLess blog={blog} />
   )
 
-  const element = screen.getByText('"testTitle",')
+  const element = screen.getByText('"testTitle" by testAuthor')
 
   expect(element).toBeDefined()
 })

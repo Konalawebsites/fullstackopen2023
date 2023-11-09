@@ -5,14 +5,14 @@ const blogStyle = {
   marginTop: '10px',
 }
 
-const buttonStyle= {
+const buttonStyle = {
   marginLeft: '100px',
   fontSize: '9px'
 }
 
 const BlogViewLess = ({ blog, handleViewBlog }) => (
-  <div style={blogStyle} >
-    <p> "{blog.title}", {blog.author} <button style={buttonStyle} onClick={handleViewBlog}> view more</button> </p>
+  <div style={blogStyle} className="blogContent" >
+    <p> "{blog.title}" by {blog.author} <button id='view_more' style={buttonStyle} onClick={handleViewBlog}>view more</button> </p>
   </div>
 )
 

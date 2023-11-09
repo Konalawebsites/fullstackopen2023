@@ -13,11 +13,7 @@ const App = () => {
   const [isError, setIsError] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setBlogTitle] = useState('')
-  const [author, setBlogAuthor] = useState('')
-  const [url, setBlogUrl] = useState('')
   const [user, setUser] = useState(null)
-  const [addBlogVisible, setAddBlogVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -59,24 +55,22 @@ const App = () => {
     setUser(null)
   }
 
-  const handleBlogAdd = async (event) => {
-    event.preventDefault()
+  const handleBlogAdd = async (blogObject) => {
+    const title = blogObject.title
+    const author = blogObject.author
+    const url = blogObject.url
 
     try {
       const blog = await blogService.create({
         title, author, url
       })
-
-      setUser(user.username)
-      setBlogTitle('')
-      setBlogAuthor('')
-      setBlogUrl('')
       setBlogs(blogs.concat(blog))
     }
+
     catch (exception) {
       handleNotificationShow('failed to add blog', true)
     }
-    handleNotificationShow(`added blog "${title}" by ${author} succesfully`, false)
+    handleNotificationShow('added blog succesfully', false)
   }
 
   const handleNotificationShow = (message, isErrorMessage) => {
@@ -92,7 +86,7 @@ const App = () => {
     return (
       <div>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} handleNotificationShow={handleNotificationShow} />
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} handleNotificationShow={handleNotificationShow} user={user}/>
         )}
       </div>
     )
@@ -106,15 +100,16 @@ const App = () => {
       {user === null
         ? <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
         : <div>
-          <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
+          <p>{user.username} logged in <button id='log_out' onClick={handleLogout}>logout</button></p>
 
-          <AddBlogForm addBlogVisible={addBlogVisible} setAddBlogVisible={setAddBlogVisible} title={title}
-            author={author} url={url} setBlogTitle={setBlogTitle} setBlogAuthor={setBlogAuthor}
-            setBlogUrl={setBlogUrl} handleBlogAdd={handleBlogAdd} user={user} setUser={setUser} />
+          <AddBlogForm createBlog={handleBlogAdd} />
 
           {blogsView()}
         </div>
       }
+      <div>
+      Blog app, Department of Computer Science, University of Helsinki 2023
+      </div>
     </div>
   )
 }
