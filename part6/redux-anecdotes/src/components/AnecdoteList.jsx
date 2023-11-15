@@ -16,6 +16,7 @@ const AnecdoteList = () => {
     )
   
     const vote = (id) => {
+      console.log('anecdotelist ID', id)
       dispatch(voteAnecdote(id))
     }
     anecdotes.sort((a, b) => b.votes - a.votes)
