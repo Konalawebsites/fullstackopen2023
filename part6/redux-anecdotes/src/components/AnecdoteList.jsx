@@ -1,5 +1,6 @@
 import { voteAnecdote } from "../reducers/anecdoteReducer"
 import { useDispatch, useSelector } from "react-redux"
+import { setNotification, clearNotification } from "../reducers/notificationReducer"
 
 const AnecdoteList = () => {
   const style = {
@@ -16,9 +17,13 @@ const AnecdoteList = () => {
     )
   
     const vote = (id) => {
-      console.log('anecdotelist ID', id)
       dispatch(voteAnecdote(id))
+      dispatch(setNotification('you liked a blog !'))
+      setTimeout(() => {
+        dispatch(clearNotification()); 
+      }, 2000);
     }
+
     anecdotes.sort((a, b) => b.votes - a.votes)
   
     return (

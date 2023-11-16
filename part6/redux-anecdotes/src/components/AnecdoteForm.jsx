@@ -1,10 +1,11 @@
 import { addAnecdote } from '../reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
+import { setNotification, clearNotification } from '../reducers/notificationReducer'
 
 const AnecdoteForm = () => {
     const style = {
         margin: 10
-      }
+    }
     const dispatch = useDispatch()
 
     const add = (event) => {
@@ -12,6 +13,10 @@ const AnecdoteForm = () => {
         const content = event.target.anecdote.value
         event.target.anecdote.value = ''
         dispatch(addAnecdote(content))
+        dispatch(setNotification('you added a blog !'))
+        setTimeout(() => {
+            dispatch(clearNotification()); 
+        }, 2000);
     }
 
     return (
