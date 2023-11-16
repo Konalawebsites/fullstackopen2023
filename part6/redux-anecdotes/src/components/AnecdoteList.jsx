@@ -12,7 +12,7 @@ const AnecdoteList = () => {
       const searchTerm = state.filter.toLowerCase()
 
       return state.anecdotes.filter(anecdote =>
-        anecdote.content.toLowerCase().includes(searchTerm)
+        anecdote.content && anecdote.content.toLowerCase && anecdote.content.toLowerCase().includes(searchTerm.toLocaleLowerCase())
       )}
     )
   
