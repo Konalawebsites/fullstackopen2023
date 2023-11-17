@@ -16,6 +16,18 @@ const anecdoteSlicer = createSlice({
   initialState,
   reducers: {
 
+    voteAnecdote(state, action) {
+      const id  = action.payload; 
+
+      const anecdoteToVote = state.find( (anecdote)  => anecdote.id === id ) 
+      if (anecdoteToVote) {
+        const updatedAnecdotes = state.map((anecdote) =>
+          anecdote.id !== id ? anecdote : { ...anecdote, votes: anecdote.votes + 1 } );
+          
+        return updatedAnecdotes;
+      }
+      return state;
+    },
     setAnecdotes(state, action) {
       console.log(action)
       return action.payload
@@ -47,11 +59,7 @@ export const updateAnecdote = (id, anecdote) => {
       ...anecdote,
       votes: anecdote.votes + 1
     }, id)
-    /* refresh anecdotes after vote */
-    const anecdotes = await anecdoteService.getAll()
-    dispatch(setAnecdotes(anecdotes))
+    dispatch(voteAnecdote(updatableAnecdote.id))
   }
 }
 export default anecdoteSlicer.reducer
-
-
