@@ -1,33 +1,13 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Menu from './components/Menu'
-import { Link, Routes, Route, useParams } from 'react-router-dom'
 import About from './components/About'
 import Footer from './components/Footer'
 import CreateNew from './components/CreateNew'
 import AnecdoteList from './components/AnecdoteList'
-
-
-const Anecdote = ({ anecdotes }) => {
-
-  const anecdoteStyle = {
-    padding: "5px",
-    margin: '5px 0',
-    maxWidth: "800px",
-    marginRight: "auto",
-    border: "outset #f33"
-  }
-
-  const id = useParams().id
-  const anecdote = anecdotes.find(n => n.id === Number(id))
-  return (
-    <div style={anecdoteStyle}>
-      <h2><b>{anecdote.content} by {anecdote.author} </b></h2>
-      <div>has {anecdote.votes} votes</div>
-      <div>for more info see <Link to={anecdote.info}> {anecdote.info}</Link> </div>
-    </div>
-  )
-}
-
+import Anecdote from './components/Anecdote'
+import Notification from './components/Notification'
+import NotificationContext from './context/NotificationContext'
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -47,7 +27,7 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
@@ -71,13 +51,16 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu />
-      <Routes>
-        <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
-        <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path="/create_new" element={<CreateNew addNew={addNew} />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
+      <NotificationContext.Provider value={[notification, notificationDispatch]}>
+        <Menu />
+        <Notification />
+        <Routes>
+          <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
+          <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path="/create_new" element={<CreateNew addNew={addNew} />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </NotificationContext.Provider>
       <Footer />
 
     </div>

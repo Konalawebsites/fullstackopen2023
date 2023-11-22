@@ -1,10 +1,14 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
+import { useNavigate } from "react-router-dom"
+import NotificationContext from "../context/NotificationContext"
+
 
 const CreateNew = (props) => {
+  const navigate = useNavigate()
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const [, notificationDispatch] = useContext(NotificationContext)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -17,6 +21,11 @@ const CreateNew = (props) => {
     setContent('')
     setAuthor('')
     setInfo('')
+    navigate('/anecdotes')
+    notificationDispatch({ type: "CREATE" })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' });
+      }, 5000);
   }
 
   return (
