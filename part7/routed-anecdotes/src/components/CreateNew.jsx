@@ -1,31 +1,35 @@
 import { useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import NotificationContext from "../context/NotificationContext"
-
+import { useField } from "../hooks"
 
 const CreateNew = (props) => {
   const navigate = useNavigate()
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
   const [, notificationDispatch] = useContext(NotificationContext)
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log(e)
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
-    setContent('')
-    setAuthor('')
-    setInfo('')
     navigate('/anecdotes')
     notificationDispatch({ type: "CREATE" })
       setTimeout(() => {
         notificationDispatch({ type: 'CLEAR' });
       }, 5000);
+  }
+  const handleReset = (e) => {
+    e.preventDefault()
+    content.onChange({ target: { value: '' }})
+    author.onChange({ target: { value: '' }})
+    info.onChange({ target: { value: '' }})
   }
 
   return (
@@ -34,18 +38,20 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input type={content.type} value={content.value} onChange={content.onChange} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input type={author.type} value={author.value} onChange={author.onChange} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input type={info.type} value={info.value} onChange={info.onChange} />
         </div>
-        <button>create</button>
+        <button type="submit" >create</button>
+        <button onClick={handleReset}> reset </button>
       </form>
+      
     </div>
   )
 
