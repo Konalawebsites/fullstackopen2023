@@ -8,20 +8,17 @@ test('Blog renders title and author when it is viewed shortly', () => {
     title: 'testTitle',
     author: 'testAuthor',
     user: {
-      username: 'testUser'
-    }
+      username: 'testUser',
+    },
   }
 
   const testUser = {
-    username: 'testUser'
+    username: 'testUser',
   }
 
-  window.localStorage.setItem(
-    'loggedBlogappUser', JSON.stringify(testUser)
-  )
+  window.localStorage.setItem('loggedBlogappUser', JSON.stringify(testUser))
 
-  render(< BlogViewLess blog={blog} />
-  )
+  render(<BlogViewLess blog={blog} />)
 
   const element = screen.getByText('"testTitle" by testAuthor')
 

@@ -26,29 +26,54 @@ const AddBlogForm = ({ createBlog }) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button id='add_blog' onClick={() => setAddBlogVisible(true)}>add blog</button>
+        <button id="add_blog" onClick={() => setAddBlogVisible(true)}>
+          add blog
+        </button>
       </div>
 
       <div style={showWhenVisible}>
         <form onSubmit={addNewBlog}>
           <h2> add a blog </h2>
           <div>
-            <input id='title' type="text" value={title} name="blogTitle" onChange={({ target }) => setBlogTitle(target.value)}
-              placeholder='title'
+            <input
+              id="title"
+              type="text"
+              value={title}
+              name="blogTitle"
+              onChange={({ target }) => setBlogTitle(target.value)}
+              placeholder="title"
             />
           </div>
           <div>
-            <input id='author' type="text" value={author} name="blogAuthor" onChange={({ target }) => setBlogAuthor(target.value)}
-              placeholder='author'
+            <input
+              id="author"
+              type="text"
+              value={author}
+              name="blogAuthor"
+              onChange={({ target }) => setBlogAuthor(target.value)}
+              placeholder="author"
             />
           </div>
           <div>
-            <input id='url' type="text" value={url} name="blogUrl" onChange={({ target }) => setBlogUrl(target.value)}
-              placeholder='url'
+            <input
+              id="url"
+              type="text"
+              value={url}
+              name="blogUrl"
+              onChange={({ target }) => setBlogUrl(target.value)}
+              placeholder="url"
             />
           </div>
-          <button id='add' type="submit" onClick={() => setAddBlogVisible(false)}>add</button>
-          <button type="button" onClick={() => setAddBlogVisible(false)}>cancel</button>
+          <button
+            id="add"
+            type="submit"
+            onClick={() => setAddBlogVisible(false)}
+          >
+            add
+          </button>
+          <button type="button" onClick={() => setAddBlogVisible(false)}>
+            cancel
+          </button>
         </form>
       </div>
     </div>
@@ -56,7 +81,7 @@ const AddBlogForm = ({ createBlog }) => {
 }
 
 AddBlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired
+  createBlog: PropTypes.func.isRequired,
 }
 
 export default AddBlogForm

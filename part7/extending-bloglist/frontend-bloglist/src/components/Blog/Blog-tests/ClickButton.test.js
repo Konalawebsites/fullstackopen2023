@@ -9,22 +9,19 @@ test('clicking the button calls event handler once', async () => {
   const blog = {
     title: 'testTitle',
     user: {
-      username: 'testUser'
-    }
+      username: 'testUser',
+    },
   }
 
   const mockHandler = jest.fn()
 
-  render(
-    <BlogViewLess blog={blog} handleViewBlog={mockHandler} />
-  )
+  render(<BlogViewLess blog={blog} handleViewBlog={mockHandler} />)
 
   const user = userEvent.setup()
   const button = screen.getByText('view more')
   await user.click(button)
 
   expect(mockHandler.mock.calls).toHaveLength(1)
-
 })
 
 /* dont know how to mock test when function not passed as props */
@@ -37,14 +34,12 @@ test('clicking the "like" button twice calls the event handler twice', async () 
     url: 'testUrl',
     likes: 2,
     user: {
-      username: 'testUser'
-    }
+      username: 'testUser',
+    },
   }
 
   const mockHandler = jest.fn()
-  render(
-    <BlogViewMore blog={blog} handleNotificationShow={mockHandler} />
-  )
+  render(<BlogViewMore blog={blog} handleNotificationShow={mockHandler} />)
 
   const user = userEvent.setup()
   const button = screen.getByText('like')
@@ -52,13 +47,4 @@ test('clicking the "like" button twice calls the event handler twice', async () 
   await user.click(button)
 
   expect(mockHandler.mock.calls).toHaveLength(2)
-
 })
-
-
-
-
-
-
-
-

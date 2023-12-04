@@ -5,12 +5,10 @@ import AddBlogForm from './AddBlogForm'
 import userEvent from '@testing-library/user-event'
 
 test('should pass correct details, when event handlers are called', async () => {
-
   const user = userEvent.setup()
   const createBlog = jest.fn()
 
-  render(<AddBlogForm createBlog={createBlog}
-  />)
+  render(<AddBlogForm createBlog={createBlog} />)
 
   const titleInput = screen.getByPlaceholderText('title')
   await user.type(titleInput, 'testTitle')
