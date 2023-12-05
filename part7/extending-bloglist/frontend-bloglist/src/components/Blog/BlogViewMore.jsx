@@ -53,9 +53,9 @@ const BlogViewMore = ({
         b.id !== blog.id ? b : returnedBlog,
       )
       setBlogs(updatedBlogs)
-      dispatch(setNotificationTimeOut('you upvoted a blog  !', 4000))
+      dispatch(setNotificationTimeOut('you upvoted a blog  !', 4000, false))
     } catch (exception) {
-      dispatch(setNotificationTimeOut('ERROR: voting blog didnt go thru !', 4000))
+      dispatch(setNotificationTimeOut('ERROR: voting blog didnt go thru !', 4000, true))
     }
   }
 
@@ -65,9 +65,9 @@ const BlogViewMore = ({
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter((b) => b.id !== blog.id))
-        dispatch(setNotificationTimeOut('the blog was deleted succesfully  !', 4000))
+        dispatch(setNotificationTimeOut('the blog was deleted succesfully  !', 4000, false))
       } catch (exception) {
-        dispatch(setNotificationTimeOut('ERROR: deleting blog didnt go thru !', 4000))
+        dispatch(setNotificationTimeOut('ERROR: deleting blog didnt go thru !', 4000, true))
       }
     }
   }

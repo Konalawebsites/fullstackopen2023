@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -8,6 +8,7 @@ import AddBlogForm from './components/AddBlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import { setNotificationTimeOut } from './reducers/notificationReducer'
+import { appendBlog } from './reducers/blogReducer' // exercise 7.11
 
 const App = () => {
   const dispatch = useDispatch()
@@ -16,6 +17,13 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+  //exercise 7.11 redux store blogs - console print
+  const blogsRedux = useSelector((state) => state.blogs.blogs)
+  useEffect(() => {
+    console.log('Saved Blogs:', blogsRedux)
+  }, [blogsRedux])
+
+  //actual blogs in frontend
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
@@ -43,7 +51,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      dispatch(setNotificationTimeOut('ERROR: failed loggin-in !', 4000))
+      dispatch(setNotificationTimeOut('ERROR: failed loggin-in !', 4000, true))
     }
   }
   const handleLogout = (event) => {
@@ -64,10 +72,16 @@ const App = () => {
         url,
       })
       setBlogs(blogs.concat(blog))
+      dispatch(appendBlog({
+        title: title,
+        author: author,
+        url: url
+      }))
+
     } catch (exception) {
-      dispatch(setNotificationTimeOut('ERROR: failed to add blog !', 4000))
+      dispatch(setNotificationTimeOut('ERROR: failed to add blog !', 4000, true))
     }
-    dispatch(setNotificationTimeOut('you added blog succesfully !', 4000))
+    dispatch(setNotificationTimeOut('you added blog succesfully !', 4000, false))
   }
 
   const blogsView = () => {
