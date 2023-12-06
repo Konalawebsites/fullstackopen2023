@@ -10,17 +10,21 @@ test('Blog renders title, author, url, likes and user when it is viewed fully', 
     url: 'testUrl',
     likes: 43,
     user: {
-      username: 'testUser',
-    },
+      username: 'testUser'
+    }
   }
 
   const testUser = {
-    username: 'testUser',
+    username: 'testUser'
   }
 
-  window.localStorage.setItem('loggedBlogappUser', JSON.stringify(testUser))
+  window.localStorage.setItem(
+    'loggedBlogappUser', JSON.stringify(testUser)
+  )
 
-  const { container } = render(<BlogViewMore blog={blog} />)
+  const { container }  = render(
+    < BlogViewMore blog={blog} />
+  )
 
   const elementTitle = screen.getByText('title: testTitle')
   const elementAuthor = screen.getByText('author: testAuthor')
@@ -34,3 +38,5 @@ test('Blog renders title, author, url, likes and user when it is viewed fully', 
   expect(elementLikes).toBeDefined()
   expect(elementUser).toBeDefined()
 })
+
+

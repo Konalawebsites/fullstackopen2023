@@ -3,6 +3,7 @@ import BlogViewMore from './BlogViewMore'
 import BlogViewLess from './BlogViewLess'
 
 const Blog = ({ blog, blogs, setBlogs, user }) => {
+
   const [isBlogView, setBlogView] = useState('viewShort')
 
   const handleViewBlog = () => {
@@ -15,18 +16,14 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   if (isBlogView === 'viewShort') {
-    return <BlogViewLess handleViewBlog={handleViewBlog} blog={blog} />
+    return (
+      <BlogViewLess handleViewBlog={handleViewBlog} blog={blog} />
+    )
   }
 
   if (isBlogView === 'viewMore') {
     return (
-      <BlogViewMore
-        handleViewBlog={handleViewBlog}
-        blog={blog}
-        blogs={blogs}
-        setBlogs={setBlogs}
-        user={user}
-      />
+      <BlogViewMore handleViewBlog={handleViewBlog} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
     )
   }
 }

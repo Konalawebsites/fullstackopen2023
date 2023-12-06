@@ -1,31 +1,26 @@
 import { useState, useEffect, useContext } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import NotificationContext from './context/NotificationContext'
 import Blog from './components/Blog/Blog'
+import NotificationQuery from './components/NotificationQuery'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './styles/index.css'
 import AddBlogForm from './components/AddBlogForm'
 import LoginForm from './components/LoginForm'
-import Notification from './components/Notification'
-import { setNotificationTimeOut } from './reducers/notificationReducer'
-import { appendBlog } from './reducers/blogReducer' // exercise 7.11
 
 const App = () => {
-  const dispatch = useDispatch()
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  //exercise 7.11 redux store blogs - console print
-  const blogsRedux = useSelector((state) => state.blogs.blogs)
-  useEffect(() => {
-    console.log('Saved Blogs:', blogsRedux)
-  }, [blogsRedux])
+  const [notification, notificationDispatch] = useContext(NotificationContext)
 
-  //actual blogs in frontend
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    blogService.getAll().then(blogs =>
+      setBlogs(blogs)
+    )
   }, [])
 
   useEffect(() => {
@@ -34,6 +29,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
+
     }
   }, [])
 
@@ -42,16 +38,20 @@ const App = () => {
 
     try {
       const user = await loginService.login({
-        username,
-        password,
+        username, password,
       })
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
-      dispatch(setNotificationTimeOut('ERROR: failed loggin-in !', 4000, true))
+      notificationDispatch({ type: 'ERROR2' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' });
+      }, 5000)
     }
   }
   const handleLogout = (event) => {
@@ -67,36 +67,31 @@ const App = () => {
 
     try {
       const blog = await blogService.create({
-        title,
-        author,
-        url,
+        title, author, url
       })
       setBlogs(blogs.concat(blog))
-      dispatch(appendBlog({
-        title: title,
-        author: author,
-        url: url
-      }))
-
-    } catch (exception) {
-      dispatch(setNotificationTimeOut('ERROR: failed to add blog !', 4000, true))
     }
-    dispatch(setNotificationTimeOut('you added blog succesfully !', 4000, false))
+
+    catch (exception) {
+      notificationDispatch({ type: 'ERROR1' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' });
+      }, 5000)
+    }
+    notificationDispatch({ type: 'CREATE' })
+    setTimeout(() => {
+      notificationDispatch({ type: 'CLEAR' })
+    }, 5000)
   }
+
 
   const blogsView = () => {
     blogs.sort((a, b) => b.likes - a.likes)
     return (
       <div>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            blogs={blogs}
-            setBlogs={setBlogs}
-            user={user}
-          />
-        ))}
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
+        )}
       </div>
     )
   }
@@ -104,33 +99,23 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
+      <NotificationContext.Provider value={[notification, notificationDispatch]}>
+        <NotificationQuery />
 
-      <Notification />
-      {user === null ? (
-        <LoginForm
-          handleLogin={handleLogin}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          username={username}
-          password={password}
-        />
-      ) : (
+        {user === null
+          ? <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
+          : <div>
+            <p>{user.username} logged in <button id='log_out' onClick={handleLogout}>logout</button></p>
+
+            <AddBlogForm createBlog={handleBlogAdd} />
+
+            {blogsView()}
+          </div>
+        }
         <div>
-          <p>
-            {user.username} logged in{' '}
-            <button id="log_out" onClick={handleLogout}>
-              logout
-            </button>
-          </p>
-
-          <AddBlogForm createBlog={handleBlogAdd} />
-
-          {blogsView()}
+          Blog app, Department of Computer Science, University of Helsinki 2023
         </div>
-      )}
-      <div>
-        Blog app, Department of Computer Science, University of Helsinki 2023
-      </div>
+      </NotificationContext.Provider>
     </div>
   )
 }
