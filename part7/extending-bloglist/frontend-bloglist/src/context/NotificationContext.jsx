@@ -14,10 +14,10 @@ const notificationReducer = (state, action) => {
   case 'ERROR1':
     state = 'ERROR: adding blog didnt pass thru ! :( '
     return state
-    case 'ERROR2':
+  case 'ERROR2':
     state = 'ERROR: username and/or password wrong '
     return state
-    case 'ERROR3':
+  case 'ERROR3':
     state = 'ERROR: liking blog didnt pass thru ! :( '
     return state
   case 'CLEAR':

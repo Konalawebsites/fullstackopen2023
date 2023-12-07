@@ -1,27 +1,45 @@
 import { useState, useEffect, useContext } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import NotificationContext from './context/NotificationContext'
 import Blog from './components/Blog/Blog'
 import NotificationQuery from './components/NotificationQuery'
 import blogService from './services/blogs'
+import { create, getAll } from './services/blogs'
 import loginService from './services/login'
 import './styles/index.css'
 import AddBlogForm from './components/AddBlogForm'
 import LoginForm from './components/LoginForm'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const queryClient = useQueryClient()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+  const blogs = useQuery({
+    queryKey: ['blogs'],
+    queryFn: getAll,
+    retry: 1
+  })
+
+  const newBlogMutation = useMutation({
+    mutationFn: create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      notificationDispatch({ type: 'CREATE' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' })
+      }, 5000)
+    },
+    onError: () => {
+      notificationDispatch({ type: 'ERROR1' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' })
+      }, 5000)
+    }
+  })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -29,9 +47,14 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-
     }
   }, [])
+
+  console.log(JSON.parse(JSON.stringify(blogs)))
+
+  if (blogs.isLoading) {
+    return <div>loading data...</div>
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -50,7 +73,7 @@ const App = () => {
     } catch (exception) {
       notificationDispatch({ type: 'ERROR2' })
       setTimeout(() => {
-        notificationDispatch({ type: 'CLEAR' });
+        notificationDispatch({ type: 'CLEAR' })
       }, 5000)
     }
   }
@@ -60,37 +83,20 @@ const App = () => {
     setUser(null)
   }
 
-  const handleBlogAdd = async (blogObject) => {
-    const title = blogObject.title
-    const author = blogObject.author
-    const url = blogObject.url
-
-    try {
-      const blog = await blogService.create({
-        title, author, url
-      })
-      setBlogs(blogs.concat(blog))
-    }
-
-    catch (exception) {
-      notificationDispatch({ type: 'ERROR1' })
-      setTimeout(() => {
-        notificationDispatch({ type: 'CLEAR' });
-      }, 5000)
-    }
-    notificationDispatch({ type: 'CREATE' })
-    setTimeout(() => {
-      notificationDispatch({ type: 'CLEAR' })
-    }, 5000)
+  const handleBlogAdd = async (event) => {
+    event.preventDefault
+    const title = event.title
+    const author = event.author
+    const url = event.url
+    newBlogMutation.mutate({ title, author, url })
   }
 
-
   const blogsView = () => {
-    blogs.sort((a, b) => b.likes - a.likes)
+    blogs.data.sort((a, b) => b.likes - a.likes)
     return (
       <div>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
+        {blogs.data.map(blog =>
+          <Blog key={blog.id} blog={blog} blogs={blogs} user={user} />
         )}
       </div>
     )
@@ -113,7 +119,7 @@ const App = () => {
           </div>
         }
         <div>
-          Blog app, Department of Computer Science, University of Helsinki 2023
+        Blog app, Department of Computer Science, University of Helsinki 2023
         </div>
       </NotificationContext.Provider>
     </div>
