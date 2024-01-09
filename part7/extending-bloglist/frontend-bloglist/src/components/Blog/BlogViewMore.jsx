@@ -70,7 +70,7 @@ const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, user }) => {
       deleteBlogMutation.mutateAsync(blog.id)
     }
   }
-
+  console.log(user)
   return (
     <div style={blogStyle2} className='blogContent'>
       <p> title: {blog.title} <button style={buttonStyle} onClick={handleViewBlog}> view less</button> </p>
@@ -79,7 +79,7 @@ const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, user }) => {
       <p> likes: {blog.likes} <button id='like' style={buttonStyle2} onClick={handleBlogLike}>like</button> </p>
       <p> user: {blog.user.username} </p>
 
-      {user.username === blog.user.username
+      {user.user.username === blog.user.username
         ? <button id='delete' style={buttonStyle2} onClick={handleBlogDelete}> delete </button>
         : null
       }

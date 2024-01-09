@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext } from 'react'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import NotificationContext from './context/NotificationContext'
+import UserContext from './context/UserContext'
 import Blog from './components/Blog/Blog'
-import NotificationQuery from './components/NotificationQuery'
+import Notification from './components/NotificationQuery'
 import blogService from './services/blogs'
 import { create, getAll } from './services/blogs'
 import loginService from './services/login'
@@ -14,9 +15,9 @@ const App = () => {
   const queryClient = useQueryClient()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const [notification, notificationDispatch] = useContext(NotificationContext)
+  const [user, userDispatch] = useContext(UserContext)
 
   const blogs = useQuery({
     queryKey: ['blogs'],
@@ -45,9 +46,15 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({
+        type: 'SET_USER',
+        payload: {
+          user,
+        },
+      })
       blogService.setToken(user.token)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (blogs.isLoading) {
@@ -64,10 +71,19 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
+
       blogService.setToken(user.token)
-      setUser(user)
+
+      userDispatch({
+        type: 'SET_USER',
+        payload: {
+          user, // Pass the user data to update the state
+        },
+      })
+
       setUsername('')
       setPassword('')
+
     } catch (exception) {
       notificationDispatch({ type: 'ERROR2' })
       setTimeout(() => {
@@ -77,8 +93,12 @@ const App = () => {
   }
   const handleLogout = (event) => {
     event.preventDefault()
+
     window.localStorage.clear()
-    setUser(null)
+    userDispatch({
+      type: 'LOGOUT',
+      payload: null,
+    })
   }
 
   const handleBlogAdd = async (event) => {
@@ -104,21 +124,23 @@ const App = () => {
     <div>
       <h1>Blogs</h1>
       <NotificationContext.Provider value={[notification, notificationDispatch]}>
-        <NotificationQuery />
+        <UserContext.Provider value={[user, userDispatch]}>
+          <Notification />
 
-        {user === null
-          ? <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
-          : <div>
-            <p>{user.username} logged in <button id='log_out' onClick={handleLogout}>logout</button></p>
+          {user === null
+            ? <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
+            : <div>
+              <p>{user.user.username} logged in <button id='log_out' onClick={handleLogout}>logout</button></p>
 
-            <AddBlogForm createBlog={handleBlogAdd} />
+              <AddBlogForm createBlog={handleBlogAdd} />
 
-            {blogsView()}
+              {blogsView()}
+            </div>
+          }
+          <div>
+            Blog app, Department of Computer Science, University of Helsinki 2023
           </div>
-        }
-        <div>
-        Blog app, Department of Computer Science, University of Helsinki 2023
-        </div>
+        </UserContext.Provider>
       </NotificationContext.Provider>
     </div>
   )

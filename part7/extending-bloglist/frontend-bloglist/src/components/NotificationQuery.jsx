@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import NotificationContext from '../context/NotificationContext'
 
-const NotificationQuery = () => {
+const Notification = () => {
   const [notification,] = useContext(NotificationContext)
   const isError = notification && notification.startsWith('ERR')
   const color = isError ? 'red' : 'green'
@@ -22,4 +22,4 @@ const NotificationQuery = () => {
   )
 }
 
-export default NotificationQuery
+export default Notification
