@@ -50,8 +50,6 @@ const App = () => {
     }
   }, [])
 
-  console.log(JSON.parse(JSON.stringify(blogs)))
-
   if (blogs.isLoading) {
     return <div>loading data...</div>
   }

@@ -1,6 +1,8 @@
 import blogService from '../../services/blogs'
 import NotificationContext from '../../context/NotificationContext'
 import { useContext } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { update, remove } from '../../services/blogs'
 
 const blogStyle2 = {
   fontSize: '10px',
@@ -19,58 +21,53 @@ const buttonStyle2 = {
 }
 
 const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, user }) => {
-
+  const queryClient = useQueryClient()
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
-  const handleBlogLike = async (event) => {
-    event.preventDefault()
-
-    try {
-      const returnedBlog = await blogService.update({
-        author: blog.author,
-        title: blog.title,
-        url: blog.url,
-        user: blog.user.id,
-        likes: blog.likes + 1
-      }, blog.id)
-
-      // adding user data from the old blog
-      returnedBlog.user = {
-        username: blog.user.username,
-        name: blog.user.name
-      }
-
-      const updatedBlogs = blogs.map(b => b.id !== blog.id ? b : returnedBlog)
-      setBlogs(updatedBlogs)
+  const updateBlogMutation = useMutation({
+    mutationFn: (blog) => update(blog),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
       notificationDispatch({ type: 'LIKE' })
       setTimeout(() => {
-        notificationDispatch({ type: 'CLEAR' });
+        notificationDispatch({ type: 'CLEAR' })
       }, 5000)
-    } catch (exception) {
+    },
+    onError: () => {
       notificationDispatch({ type: 'ERROR' })
       setTimeout(() => {
         notificationDispatch({ type: 'CLEAR' })
       }, 5000)
-    }
+    },
+  })
+  const deleteBlogMutation = useMutation({
+    mutationFn: (blogId) => remove(blogId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      notificationDispatch({ type: 'DELETE' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' })
+      }, 5000)
+    },
+    onError: () => {
+      notificationDispatch({ type: 'ERROR' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' })
+      }, 5000)
+    },
+  })
+
+  const handleBlogLike = async (event) => {
+    event.preventDefault()
+    console.log(blog.id)
+    updateBlogMutation.mutateAsync({ blog: { ...blog, likes: blog.likes + 1 }, blogId: blog.id })
   }
 
   const handleBlogDelete = async (event) => {
     event.preventDefault()
+    console.log('deleting..', blog)
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-
-      try {
-        await blogService.remove(blog.id)
-        setBlogs(blogs.filter(b => b.id !== blog.id))
-        notificationDispatch({ type: 'DELETE' })
-        setTimeout(() => {
-          notificationDispatch({ type: 'CLEAR' })
-        }, 5000)
-      } catch (exception) {
-        notificationDispatch({ type: 'ERROR3' })
-        setTimeout(() => {
-          notificationDispatch({ type: 'CLEAR' })
-        }, 5000)
-      }
+      deleteBlogMutation.mutateAsync(blog.id)
     }
   }
 
