@@ -2,14 +2,19 @@ import { useState, useEffect, useContext } from 'react'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import NotificationContext from './context/NotificationContext'
 import UserContext from './context/UserContext'
-import Blog from './components/Blog/Blog'
+import BlogsView from './components/route-Blogs/BlogsView'
+import UsersView from './components/route-Users/UsersView'
 import Notification from './components/NotificationQuery'
+import Menu from './components/Menu'
+import Bottom from './components/Bottom'
 import blogService from './services/blogs'
 import { create, getAll } from './services/blogs'
+import { getUsers } from './services/users'
 import loginService from './services/login'
 import './styles/index.css'
-import AddBlogForm from './components/AddBlogForm'
+import AddBlogForm from './components/route-Blogs/AddBlogForm'
 import LoginForm from './components/LoginForm'
+import { Routes, Route } from 'react-router-dom'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -22,6 +27,12 @@ const App = () => {
   const blogs = useQuery({
     queryKey: ['blogs'],
     queryFn: getAll,
+    retry: 1
+  })
+
+  const users = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
     retry: 1
   })
 
@@ -54,7 +65,7 @@ const App = () => {
       })
       blogService.setToken(user.token)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (blogs.isLoading) {
@@ -109,17 +120,6 @@ const App = () => {
     newBlogMutation.mutate({ title, author, url })
   }
 
-  const blogsView = () => {
-    blogs.data.sort((a, b) => b.likes - a.likes)
-    return (
-      <div>
-        {blogs.data.map(blog =>
-          <Blog key={blog.id} blog={blog} blogs={blogs} user={user} />
-        )}
-      </div>
-    )
-  }
-
   return (
     <div>
       <h1>Blogs</h1>
@@ -132,13 +132,20 @@ const App = () => {
             : <div>
               <p>{user.user.username} logged in <button id='log_out' onClick={handleLogout}>logout</button></p>
 
-              <AddBlogForm createBlog={handleBlogAdd} />
+              <Menu id='menu' />
 
-              {blogsView()}
+              <Routes>
+                <Route path="/users" element={<UsersView users={users.data}/>}/>
+                <Route path="/blogs" element={<>
+                  <AddBlogForm createBlog={handleBlogAdd}/>
+                  <BlogsView blogs={blogs} user={user}/>
+                </>}/>
+              </Routes>
+
             </div>
           }
           <div>
-            Blog app, Department of Computer Science, University of Helsinki 2023
+            < Bottom />
           </div>
         </UserContext.Provider>
       </NotificationContext.Provider>
