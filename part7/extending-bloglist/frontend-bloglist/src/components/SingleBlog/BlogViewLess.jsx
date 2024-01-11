@@ -1,13 +1,18 @@
 const blogStyle = {
   fontSize: '10px',
   padding: '1px',
-  border: '1px solid black',
   marginTop: '10px',
+  width: '35%',
+  border: '1px solid black',
+  position: 'relative'
 }
 
 const buttonStyle = {
-  marginLeft: '100px',
-  fontSize: '9px'
+  fontSize: '9px',
+  position: 'absolute',
+  top: '0',
+  right: '0'
+
 }
 
 const BlogViewLess = ({ blog, handleViewBlog }) => (

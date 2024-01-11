@@ -12,7 +12,8 @@ const Notification = () => {
     border: notification !== null ? 'solid 2px black' : null,
     color: color,
     fontWeight: '600',
-    background: backgroundcolor
+    background: backgroundcolor,
+    width: '35%'
   }
 
   return (

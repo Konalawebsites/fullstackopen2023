@@ -1,7 +1,7 @@
 import blogService from '../../services/blogs'
 import NotificationContext from '../../context/NotificationContext'
 import { useContext } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { update, remove } from '../../services/blogs'
 
 const blogStyle2 = {
@@ -9,18 +9,21 @@ const blogStyle2 = {
   padding: '1px',
   border: '1px solid orange',
   marginTop: '10px',
+  width: '35%',
+  position: 'relative'
 }
 const buttonStyle = {
-  marginLeft: '100px',
   fontSize: '9px',
-  color: 'orange'
+  color: 'orange',
+  top: '0',
+  right: '0',
+  position: 'absolute'
 }
 const buttonStyle2 = {
-  marginLeft: '10px',
   fontSize: '8px'
 }
 
-const BlogViewMore = ({ handleViewBlog, blog, blogs, setBlogs, user }) => {
+const BlogViewMore = ({ handleViewBlog, blog, user }) => {
   const queryClient = useQueryClient()
   const [notification, notificationDispatch] = useContext(NotificationContext)
 

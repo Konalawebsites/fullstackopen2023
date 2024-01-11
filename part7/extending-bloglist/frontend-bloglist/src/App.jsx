@@ -4,6 +4,7 @@ import NotificationContext from './context/NotificationContext'
 import UserContext from './context/UserContext'
 import BlogsView from './components/route-Blogs/BlogsView'
 import UsersView from './components/route-Users/UsersView'
+import User from './components/route-Users/User'
 import Notification from './components/NotificationQuery'
 import Menu from './components/Menu'
 import Bottom from './components/Bottom'
@@ -135,11 +136,19 @@ const App = () => {
               <Menu id='menu' />
 
               <Routes>
-                <Route path="/users" element={<UsersView users={users.data}/>}/>
+                <Route path="/users" element={<UsersView users={users.data} />} />
+
+                {users?.data.map(user => (
+                  <Route
+                    key={user.id}
+                    path={`/users/${user.id}`}
+                    element={<User user={user} />}
+                  />
+                ))}
                 <Route path="/blogs" element={<>
-                  <AddBlogForm createBlog={handleBlogAdd}/>
-                  <BlogsView blogs={blogs} user={user}/>
-                </>}/>
+                  <AddBlogForm createBlog={handleBlogAdd} />
+                  <BlogsView blogs={blogs} user={user} />
+                </>} />
               </Routes>
 
             </div>

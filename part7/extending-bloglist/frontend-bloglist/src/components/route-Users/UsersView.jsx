@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 
 const containerStyle = {
   display: 'flex',
@@ -30,9 +31,10 @@ const UsersView = ({ users }) => {
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {users?.map(user => (
             <tr key={user.id}>
-              <td style={flexContainerStyle}>{user.username}</td>
+              <td style={flexContainerStyle}>
+                <Link to={`/users/${user.id}`}>{user.username}</Link></td>
               <td style={centeredCell}>{user.blogs.length}</td>
             </tr>
           ))}
