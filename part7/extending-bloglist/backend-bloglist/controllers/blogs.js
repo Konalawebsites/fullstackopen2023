@@ -1,21 +1,22 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 const middleware = require('../utils/middleware')
-const jwt = require('jsonwebtoken')
 
+// get all blogs
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
     .populate('user', { username: 1, name: 1 })
-  
+
   response.json(blogs.map(blog => blog.toJSON()))
 })
 
+// get single blog 
 blogsRouter.get('/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   response.json(blog)
 })
 
+// post blog 
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
   const user = request.user
@@ -25,7 +26,8 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
-    user: user._id
+    user: user._id,
+    comments: body.comments,
   })
 
   const savedBlog = await blog.save()
@@ -35,8 +37,9 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 }
 )
 
+// delete blog 
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
-  
+
   const blog = await Blog.findById(request.params.id)
   const user = request.user
 
@@ -49,6 +52,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
   response.status(204).end()
 })
 
+// moderate single blog 
 blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
 
@@ -56,12 +60,48 @@ blogsRouter.put('/:id', async (request, response) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes
+    likes: body.likes,
+    comments: body.comments
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {new: true})
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
   response.json(updatedBlog.toJSON())
 })
 
 
-module.exports = blogsRouter
+// get single blog comments
+blogsRouter.get('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+  response.json(blog.comments)
+})
+
+// post comment for a blog
+blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response) => {
+
+  try {
+    const blog = await Blog.findById(request.params.id)
+
+    console.log('blog', blog)
+    console.log('body', request.body)
+    console.log('blog.comments', blog.comments)
+
+    const newComments = request.body;
+
+    // Check if newComments is an array
+    if (Array.isArray(newComments)) {
+      // Concatenate the existing comments array with the newComments array
+      blog.comments = blog.comments.concat(newComments);
+    } else {
+      return response.status(400).json({ error: 'Invalid comments format' });
+    }
+
+    const updatedBlogComments = await blog.save()
+
+    response.json(updatedBlogComments.toJSON());
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    response.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+  module.exports = blogsRouter
