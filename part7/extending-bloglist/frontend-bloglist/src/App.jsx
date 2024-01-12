@@ -16,6 +16,7 @@ import './styles/index.css'
 import AddBlogForm from './components/route-Blogs/AddBlogForm'
 import LoginForm from './components/LoginForm'
 import { Routes, Route } from 'react-router-dom'
+import BlogViewMore from './components/SingleBlog/BlogViewMore'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -131,26 +132,31 @@ const App = () => {
           {user === null
             ? <LoginForm handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} username={username} password={password} />
             : <div>
-              <p>{user.user.username} logged in <button id='log_out' onClick={handleLogout}>logout</button></p>
-
-              <Menu id='menu' />
-
+              <Menu id='menu' user={user} handleLogout={handleLogout}/>
               <Routes>
                 <Route path="/users" element={<UsersView users={users.data} />} />
 
-                {users?.data.map(user => (
+                {users.data?.map(user => (
                   <Route
                     key={user.id}
                     path={`/users/${user.id}`}
                     element={<User user={user} />}
                   />
                 ))}
+
                 <Route path="/blogs" element={<>
                   <AddBlogForm createBlog={handleBlogAdd} />
                   <BlogsView blogs={blogs} user={user} />
                 </>} />
-              </Routes>
 
+                {blogs.data?.map(blog => (
+                  <Route
+                    key={blog.id}
+                    path={`/blogs/${blog.id}`}
+                    element={<BlogViewMore blog={blog} user={user} />}
+                  />
+                ))}
+              </Routes>
             </div>
           }
           <div>

@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
+import { Link } from 'react-router-dom'
+
 const blogStyle = {
   fontSize: '10px',
   padding: '1px',
@@ -7,17 +10,10 @@ const blogStyle = {
   position: 'relative'
 }
 
-const buttonStyle = {
-  fontSize: '9px',
-  position: 'absolute',
-  top: '0',
-  right: '0'
-
-}
-
-const BlogViewLess = ({ blog, handleViewBlog }) => (
+const BlogViewLess = ({ blog }) => (
   <div style={blogStyle} className="blogContent" >
-    <p> "{blog.title}" by {blog.author} <button id='view_more' style={buttonStyle} onClick={handleViewBlog}>view more</button> </p>
+    <Link to={`/blogs/${blog.id}`}> "{blog.title}" by {blog.author}
+    </Link>
   </div>
 )
 

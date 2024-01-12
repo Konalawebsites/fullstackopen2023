@@ -1,8 +1,8 @@
-import blogService from '../../services/blogs'
 import NotificationContext from '../../context/NotificationContext'
 import { useContext } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { update, remove } from '../../services/blogs'
+import { Link } from 'react-router-dom'
 
 const blogStyle2 = {
   fontSize: '10px',
@@ -12,18 +12,11 @@ const blogStyle2 = {
   width: '35%',
   position: 'relative'
 }
-const buttonStyle = {
-  fontSize: '9px',
-  color: 'orange',
-  top: '0',
-  right: '0',
-  position: 'absolute'
-}
 const buttonStyle2 = {
   fontSize: '8px'
 }
 
-const BlogViewMore = ({ handleViewBlog, blog, user }) => {
+const BlogViewMore = ({ blog, user }) => {
   const queryClient = useQueryClient()
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
@@ -76,11 +69,11 @@ const BlogViewMore = ({ handleViewBlog, blog, user }) => {
 
   return (
     <div style={blogStyle2} className='blogContent'>
-      <p> title: {blog.title} <button style={buttonStyle} onClick={handleViewBlog}> view less</button> </p>
-      <p> author: {blog.author} </p>
-      <p> website: {blog.url} </p>
+
+      <h2> {blog.title} </h2>
+      <Link to={blog.url}>{blog.url} {blog.author} </Link>
       <p> likes: {blog.likes} <button id='like' style={buttonStyle2} onClick={handleBlogLike}>like</button> </p>
-      <p> user: {blog.user.username} </p>
+      <p> added by {blog.user.username} </p>
 
       {user.user.username === blog.user.username
         ? <button id='delete' style={buttonStyle2} onClick={handleBlogDelete}> delete </button>
