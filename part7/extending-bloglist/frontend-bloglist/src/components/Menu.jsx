@@ -5,7 +5,7 @@ const style = {
   marginBottom: '15px',
   display: 'flex',
   backgroundColor: 'lightyellow',
-  width: '45%, 5'
+  width: '45%'
 }
 const linkStyle = {
   paddingRight: '30px'

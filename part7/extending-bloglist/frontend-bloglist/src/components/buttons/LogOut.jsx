@@ -4,5 +4,4 @@ const LogoutButton = ({ handleLogout, user }) => {
   )
 }
 
-
 export default LogoutButton

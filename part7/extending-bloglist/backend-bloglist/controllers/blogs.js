@@ -76,31 +76,20 @@ blogsRouter.get('/:id/comments', async (request, response) => {
 })
 
 // post comment for a blog
-blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response) => {
+blogsRouter.post('/:id/comments', async (request, response) => {
 
   try {
     const blog = await Blog.findById(request.params.id)
 
-    console.log('blog', blog)
-    console.log('body', request.body)
-    console.log('blog.comments', blog.comments)
+    const newComment = request.body.newComment
 
-    const newComments = request.body;
-
-    // Check if newComments is an array
-    if (Array.isArray(newComments)) {
-      // Concatenate the existing comments array with the newComments array
-      blog.comments = blog.comments.concat(newComments);
-    } else {
-      return response.status(400).json({ error: 'Invalid comments format' });
-    }
-
+    blog.comments = blog.comments.concat(newComment)
     const updatedBlogComments = await blog.save()
+    response.json(updatedBlogComments.toJSON())
 
-    response.json(updatedBlogComments.toJSON());
   } catch (error) {
     console.error('Error adding comment:', error);
-    response.status(500).json({ error: 'Internal Server Error' });
+    response.status(500).json({ error: 'Internal Server Error' })
   }
 })
 
