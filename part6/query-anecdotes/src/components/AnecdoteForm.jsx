@@ -5,7 +5,7 @@ import { useContext } from 'react'
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
-  const [notification, notificationDispatch] = useContext(NotificationContext)
+  const [, notificationDispatch] = useContext(NotificationContext)
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
@@ -23,7 +23,6 @@ const AnecdoteForm = () => {
       setTimeout(() => {
         notificationDispatch({ type: 'CLEAR' });
       }, 5000);
-
     }
   })
 

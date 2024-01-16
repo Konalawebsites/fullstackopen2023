@@ -32,7 +32,6 @@ const App = () => {
     <div>
       <h1>Country info application</h1>
       <FilterForm newFilter={newFilter} handleFilterChange={handleFilterChange} />
-      
       <Countries countriesShown={countriesShown} handleClick={handleClick}/>
 
     </div>

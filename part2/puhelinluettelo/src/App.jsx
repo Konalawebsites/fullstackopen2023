@@ -86,8 +86,8 @@ const App = () => {
         setTimeout(() => {
           setNotificationMessage(null)
         }, 5000)
-     })
-    }
+      })
+  }
 
   const removePerson = (person) => {
     personService

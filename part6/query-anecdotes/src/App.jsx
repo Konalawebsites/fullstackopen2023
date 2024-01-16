@@ -1,8 +1,7 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { useQuery } from '@tanstack/react-query'
 import { getAnecdotes, updateAnecdote } from './requests'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { useReducer, useContext } from 'react'
 import NotificationContext from './context/NotificationContext'
 
@@ -22,8 +21,6 @@ const App = () => {
     queryFn: getAnecdotes,
     retry: 1
   })
-
-  console.log(JSON.parse(JSON.stringify(result)))
 
   if (result.isLoading) {
     return <div>loading data...</div>
