@@ -19,11 +19,11 @@ let authors = [
     id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
     born: 1821
   },
-  { 
+  {
     name: 'Joshua Kerievsky', // birthyear not known
     id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
   },
-  { 
+  {
     name: 'Sandi Metz', // birthyear not known
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
@@ -71,7 +71,7 @@ let books = [
     author: 'Joshua Kerievsky',
     id: "afa5de01-344d-11e9-a414-719c6709cf3e",
     genres: ['refactoring', 'patterns']
-  },  
+  },
   {
     title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
     published: 2012,
@@ -126,6 +126,11 @@ type Mutation {
     published: Int!
     genres: [String!]!
   ): Book!
+
+  editAuthor(
+    name: String!
+    setBornTo: Int!
+  ): Author!
 }
 `
 
@@ -135,19 +140,18 @@ const resolvers = {
 
     authorCount: () => authors.length,
 
-    allBooks: (root, {author, genre}) => {
-      
+    allBooks: (root, { author, genre }) => {
+
       const filteredBooks = books.filter((book) => {
         return (!author || book.author === author) &&
-               (!genre || book.genres.includes(genre));
+          (!genre || book.genres.includes(genre));
       });
 
       return filteredBooks;
-      },
+    },
 
     allAuthors: () => {
-      return authors.map((author) => 
-      {
+      return authors.map((author) => {
         const authorBooks = books.filter((book) => book.author === author.name);
         return {
           ...author,
@@ -166,6 +170,20 @@ const resolvers = {
       const book = { ...args, id: uuid.v4() }
       books = books.concat(book)
       return book
+    },
+    editAuthor: (root, args,) => {
+      console.log(args)
+      const searchableName = args.name
+
+      const updatedAuthors = authors.map(author => {
+        if (author.name === searchableName)
+          return { ...author, born: args.setBornTo }
+        return author
+      }
+      )
+      authors = updatedAuthors
+
+      return  authors.find( author => author.name === searchableName) || null 
     }
   },
 
