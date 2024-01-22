@@ -126,6 +126,12 @@ type Mutation {
     published: Int!
     genres: [String!]!
   ): Book!
+
+  editAuthor(
+    name: String!
+    setBornTo: Int!
+  ): Author!
+  allBooks: [Book!]!
 }
 `
 
@@ -166,7 +172,21 @@ const resolvers = {
       const book = { ...args, id: uuid.v4() }
       books = books.concat(book)
       return book
-    }
+    },
+    editAuthor: (root, args,) => {
+      console.log(args)
+      const searchableName = args.name
+
+      const updatedAuthors = authors.map(author => {
+        if (author.name === searchableName)
+          return { ...author, born: args.setBornTo }
+        return author
+      }
+      )
+      authors = updatedAuthors
+
+      return  authors.find( author => author.name === searchableName) || null 
+    },
   },
 
   Book: {
