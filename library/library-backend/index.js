@@ -29,20 +29,6 @@ let authors = [
   },
 ]
 
-/*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conección con el libro
-*/
-
 let books = [
   {
     title: 'Clean Code',
@@ -95,10 +81,6 @@ let books = [
   },
 ]
 
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
-
 const typeDefs = `
 type Book {
   title: String!
@@ -131,6 +113,7 @@ type Mutation {
     name: String!
     setBornTo: Int!
   ): Author!
+  allBooks: [Book!]!
 }
 `
 
@@ -163,6 +146,8 @@ const resolvers = {
 
   Mutation: {
     addBook: (root, args,) => {
+      console.log('asddad')
+      console.log(args)
       if (!authors.some(author => author.name === args.author)) {
         const newAuthor = { name: args.author, id: uuid.v4(), born: null }
         authors = authors.concat(newAuthor)
