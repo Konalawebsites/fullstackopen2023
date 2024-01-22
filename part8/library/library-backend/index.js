@@ -81,10 +81,6 @@ let books = [
   },
 ]
 
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
-
 const typeDefs = `
 type Book {
   title: String!
@@ -117,6 +113,7 @@ type Mutation {
     name: String!
     setBornTo: Int!
   ): Author!
+  allBooks: [Book!]!
 }
 `
 
@@ -149,6 +146,8 @@ const resolvers = {
 
   Mutation: {
     addBook: (root, args,) => {
+      console.log('asddad')
+      console.log(args)
       if (!authors.some(author => author.name === args.author)) {
         const newAuthor = { name: args.author, id: uuid.v4(), born: null }
         authors = authors.concat(newAuthor)
