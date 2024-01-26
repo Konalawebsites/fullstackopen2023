@@ -1,6 +1,8 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql');
 const uuid = require('uuid')
+
 let authors = [
   {
     name: 'Robert Martin',
@@ -97,22 +99,22 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
 
     allBooks: async (root, { author, genre }) => {
-  
-    try {
-      const books = await Book.find({}).populate('author')
-    
-      const filteredBooks = books.filter((book) => {
-        return (!author || book.author.name === author) &&
-              (!genre || book.genres.includes(genre))
-      })
 
-      return filteredBooks
+      try {
+        const books = await Book.find({}).populate('author')
 
-    }
-    catch (error) {
-      console.error('Error fetching books:', error);
+        const filteredBooks = books.filter((book) => {
+          return (!author || book.author.name === author) &&
+            (!genre || book.genres.includes(genre))
+        })
+
+        return filteredBooks
+
+      }
+      catch (error) {
+        console.error('Error fetching books:', error);
         throw new Error('Failed to fetch books');
-    }
+      }
     },
 
     allAuthors: async () =>
@@ -121,30 +123,39 @@ const resolvers = {
   Author: {
     bookCount: async (root, args) => {
       const authorsBooks = await Book.find({ author: root._id.toString() })
-      .populate('author')
+        .populate('author')
       return authorsBooks.length
     }
   },
 
   Mutation: {
     addBook: async (root, args,) => {
-      console.log(args)
 
       let author = await Author.findOne({ name: args.author });
 
-      console.log('Author found:', !!author);
-
-      if (!author) {
-        const newAuthor = new Author({ name: args.author, id: uuid.v4(), born: null })
-        newAuthor.save()
-        author = newAuthor
+      // if author not existing , create new author// 
+      try {
+        if (!author) {
+          const newAuthor = new Author({ name: args.author, id: uuid.v4(), born: null })
+          await newAuthor.save()
+          author = newAuthor
+        }
+      }
+      catch (error) {
+        throw new GraphQLError(error)
       }
 
-      const book = new Book({
-        ...args,
-        author: author
-      })
-      return await book.save()
+      // create book // 
+      try {
+        const newBook = new Book({
+          ...args,
+          author: author
+        })
+        return await newBook.save()
+      }
+      catch (error) {
+        throw new GraphQLError(error)
+      }
     },
 
     editAuthor: async (root, args,) => {
