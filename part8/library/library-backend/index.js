@@ -5,35 +5,6 @@ const { GraphQLError } = require('graphql');
 const uuid = require('uuid')
 const jwt = require('jsonwebtoken')
 
-let authors = [
-  {
-    name: 'Robert Martin',
-    id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
-    born: 1952,
-  },
-  {
-    name: 'Martin Fowler',
-    id: "afa5b6f0-344d-11e9-a414-719c6709cf3e",
-    born: 1963
-  }
-]
-let books = [
-  {
-    title: 'Refactoring, edition 2',
-    published: 2018,
-    author: 'Martin Fowler',
-    id: "afa5de00-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring']
-  },
-  {
-    title: 'Refactoring to patterns',
-    published: 2008,
-    author: 'Joshua Kerievsky',
-    id: "afa5de01-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring', 'patterns']
-  }
-]
-
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Book = require('./models/book')
@@ -236,7 +207,7 @@ const resolvers = {
     },
 
     createUser: async (root, args) => {
-      console.log(args)
+
       const user = new User({ username: args.username })
 
       return user.save()
